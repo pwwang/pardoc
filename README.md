@@ -132,7 +132,7 @@ ParsedSection(title=Raises)
 from pardoc import google_parser, numpy_parser
 parsed = google_parser(docstring)
 # or
-parsed = google_parser(docstring)
+parsed = numpy_parser(docstring)
 ```
 
 ### Parsing an unknown style docstring
