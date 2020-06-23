@@ -22,10 +22,10 @@ repos:
     rev: v2.4.4
     hooks:
     -   id: pylint
-        files: ^cmdy.py$
+        files: ^pardoc/.+\.py$
         pass_filenames: false
         types: [python]
-        args: [cmdy]
+        args: [pardoc]
 -   repo: local
     hooks:
     -   id: poetry2setuppy
@@ -46,4 +46,4 @@ repos:
         language: system
         args: [tests/]
         pass_filenames: false
-        files: ^tests/.+$|^cmdy.py$
+        files: ^tests/.+$|^pardoc/.+\.py$

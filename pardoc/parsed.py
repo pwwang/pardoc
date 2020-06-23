@@ -9,7 +9,7 @@ ParsedSection = namedtuple('ParsedSection', ['title', 'section'])
 ParsedPara = namedtuple('ParsedPara', ['lines'])
 ParsedCode = namedtuple('ParsedCode', ['lang', 'codes'])
 
-class Parsed(OrderedDiot):
+class Parsed(OrderedDiot): # pylint: disable=too-few-public-methods
     """The Parsed class to have all parsed sections"""
     def __init__(self, *args, **kwargs):
         kwargs['diot_nest'] = False
