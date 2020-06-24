@@ -1,5 +1,7 @@
 # pardoc
 
+[![pypi][3]][4] [![tag][5]][6] [![travis][7]][8] [![codacy quality][9]][10] [![codacy quality][11]][10] ![pyver][12]
+
 Yet another docstring parser for python, using [`lark-parser`][1]
 
 ## Installation
@@ -214,3 +216,13 @@ See `A quick look`
 
 [1]: https://github.com/lark-parser/lark
 [2]: https://github.com/pwwang/diot
+[3]: https://img.shields.io/pypi/v/pardoc?style=flat-square
+[4]: https://pypi.org/project/pardoc/
+[5]: https://img.shields.io/github/tag/pwwang/pardoc?style=flat-square
+[6]: https://github.com/pwwang/pardoc
+[7]: https://img.shields.io/travis/pwwang/pardoc?style=flat-square
+[8]: https://travis-ci.org/pwwang/pardoc
+[9]: https://img.shields.io/codacy/grade/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+[10]: https://app.codacy.com/project/pwwang/pardoc/dashboard
+[11]: https://img.shields.io/codacy/coverage/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+[12]: https://img.shields.io/pypi/pyversions/pardoc?style=flat-square
