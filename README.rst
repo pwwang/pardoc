@@ -2,6 +2,32 @@
 pardoc
 ======
 
+`
+.. image:: https://img.shields.io/pypi/v/pardoc?style=flat-square
+   :target: https://img.shields.io/pypi/v/pardoc?style=flat-square
+   :alt: pypi
+ <https://pypi.org/project/pardoc/>`_ `
+.. image:: https://img.shields.io/github/tag/pwwang/pardoc?style=flat-square
+   :target: https://img.shields.io/github/tag/pwwang/pardoc?style=flat-square
+   :alt: tag
+ <https://github.com/pwwang/pardoc>`_ `
+.. image:: https://img.shields.io/travis/pwwang/pardoc?style=flat-square
+   :target: https://img.shields.io/travis/pwwang/pardoc?style=flat-square
+   :alt: travis
+ <https://travis-ci.org/pwwang/pardoc>`_ `
+.. image:: https://img.shields.io/codacy/grade/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+   :target: https://img.shields.io/codacy/grade/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+   :alt: codacy quality
+ <https://app.codacy.com/project/pwwang/pardoc/dashboard>`_ `
+.. image:: https://img.shields.io/codacy/coverage/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+   :target: https://img.shields.io/codacy/coverage/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+   :alt: codacy quality
+ <https://app.codacy.com/project/pwwang/pardoc/dashboard>`_ 
+.. image:: https://img.shields.io/pypi/pyversions/pardoc?style=flat-square
+   :target: https://img.shields.io/pypi/pyversions/pardoc?style=flat-square
+   :alt: pyver
+
+
 Yet another docstring parser for python, using `\ ``lark-parser`` <https://github.com/lark-parser/lark>`_
 
 Installation
