@@ -134,6 +134,7 @@ def test_func_docstring():
         param0: No type
         param1 (int): The first parameter.
         param2 (str): The second parameter.
+            more
 
     Returns:
         bool: The return value. True for success, False otherwise.
@@ -183,6 +184,7 @@ Args:
     param0: No type
     param1 (int): The first parameter.
     param2 (str): The second parameter.
+        more
 
 Returns:
     bool: The return value. True for success, False otherwise.
@@ -202,10 +204,18 @@ ParsedSection(title=Args)
    ParsedItem(name=param0, type=None, desc=No type)
    ParsedItem(name=param1, type=int, desc=The first parameter.)
    ParsedItem(name=param2, type=str, desc=The second parameter.)
+      ParsedPara(lines=1)
+         more
 
 ParsedSection(title=Returns)
    ParsedItem(name=bool, type=None, desc=The return value. True for success, False otherwise.)
 """
+
+    markdown = pardoc.google_parser.format(doc, to='markdown')
+    assert '# Example function with types documented in the docstring.' in markdown
+    assert '# Args:' in markdown
+    assert '`param0`: No type' in markdown
+    assert '`param1` (`int`): The first parameter' in markdown
 
 def test_todo_tree():
     doc = """Todo tree
@@ -239,6 +249,12 @@ ParsedSection(title=Todo)
       ParsedPara(lines=1)
          Long description
 """
+
+    markdown = pardoc.google_parser.format(doc, to='markdown')
+    assert '# Todo tree' in markdown
+    assert '# Todo:' in markdown
+    assert '  - Something todo' in markdown
+    assert '    Long description' in markdown
 
 def test_codeblock():
     doc = """Codeblock
@@ -295,6 +311,11 @@ ParsedSection(title=SUMMARY)
 
     parser = pardoc.auto_parser(doc)
     assert parser is pardoc.google_parser
+
+    markdown = pardoc.google_parser.format(doc, to='markdown')
+    assert '# Codeblock' in markdown
+    assert '```python\ndef echo(s):  \n  print(s)  \n```' in markdown
+    assert '```\nanother codeblock  \n```' in markdown
 
 def test_empty():
     pardoc.google_parser._cached.clear()

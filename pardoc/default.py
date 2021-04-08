@@ -11,6 +11,7 @@ from .parsed import (
 )
 
 INDENT_BASE = '    '
+INDENT_BASE_MD = '  '
 
 # first section title
 SUMMARY = 'SUMMARY'
@@ -178,6 +179,27 @@ class Parser:
                 formatted.append(indent + line)
         return formatted
 
+    def _format_para_markdown(self,
+                              elem,
+                              indent,
+                              heading,
+                              leading_empty_line,
+                              indent_base):
+        """Format ParsedPara"""
+        formatted = [''] if leading_empty_line else []
+        for i, line in enumerate(elem.lines):
+            if isinstance(line, ParsedPara):
+                if i == 0 and leading_empty_line and len(formatted) == 1:
+                    formatted = []
+                formatted.extend(self._format_para_markdown(
+                    line, indent + indent_base, heading,
+                    leading_empty_line=(i > 0),
+                    indent_base=indent_base
+                ))
+            else:
+                formatted.append(indent + line + '  ')
+        return formatted
+
     def _format_code(self,
                      elem,
                      indent,
@@ -189,6 +211,24 @@ class Parser:
         for i, code in enumerate(elem.codes):
             formatted.extend(self._format_element(
                 code, indent,
+                leading_empty_line=(i > 0),
+                indent_base=indent_base
+            ))
+        formatted.append(f'{indent}```')
+        return formatted
+
+    def _format_code_markdown(self,
+                              elem,
+                              indent,
+                              heading,
+                              leading_empty_line,
+                              indent_base):
+        """Format ParsedCode to markdown"""
+        formatted = [''] if leading_empty_line else []
+        formatted.append(f'{indent}```{elem.lang or ""}')
+        for i, code in enumerate(elem.codes):
+            formatted.extend(self._format_element_markdown(
+                code, indent, heading,
                 leading_empty_line=(i > 0),
                 indent_base=indent_base
             ))
@@ -207,6 +247,24 @@ class Parser:
         for i, mor in enumerate(elem.more):
             formatted.extend(self._format_element(
                 mor, indent + indent_base,
+                leading_empty_line=(i != 0),
+                indent_base=indent_base
+            ))
+        return formatted
+
+    def _format_todo_markdown(self,
+                              elem,
+                              indent,
+                              heading,
+                              leading_empty_line,
+                              indent_base):
+        """Format ParsedTodo to markdown"""
+        formatted = [''] if leading_empty_line else []
+        formatted.append(f"{indent}- {elem.todo}")
+
+        for i, mor in enumerate(elem.more):
+            formatted.extend(self._format_element_markdown(
+                mor, indent + indent_base, heading,
                 leading_empty_line=(i != 0),
                 indent_base=indent_base
             ))
@@ -233,12 +291,72 @@ class Parser:
             ))
         return formatted
 
+    def _format_item_markdown(self,
+                              elem,
+                              indent,
+                              heading,
+                              leading_empty_line,
+                              indent_base):
+        formatted = [''] if leading_empty_line else []
+        if elem.type:
+            formatted.append(f"{indent}`{elem.name}` "
+                             f"(`{elem.type}`): {elem.desc}")
+        else:
+            formatted.append(f"{indent}`{elem.name}`: {elem.desc}  ")
+
+        for i, mor in enumerate(elem.more):
+            formatted.extend(self._format_element_markdown(
+                mor, indent + indent_base, heading,
+                leading_empty_line=(i != 0),
+                indent_base=indent_base
+            ))
+        return formatted
+
     def _format_section(self,
                         elem,
                         indent,
                         leading_empty_line=True,
                         indent_base=INDENT_BASE):
         """Format ParsedSection"""
+
+    def _format_section_markdown(self,
+                                 elem,
+                                 indent,
+                                 heading,
+                                 leading_empty_line=True,
+                                 indent_base=INDENT_BASE):
+        """Format ParsedSection to markdown"""
+        formatted = [''] if leading_empty_line else []
+        if elem.title == SUMMARY:
+            section = elem.section[1:]
+            if (elem.section and
+                    isinstance(elem.section[0], ParsedPara) and
+                    elem.section[0].lines):
+
+                formatted.append('#' * heading + ' ' + elem.section[0].lines[0])
+                section.insert(0, ParsedPara(elem.section[0].lines[1:]))
+            elif elem.section: # pragma: no cover
+                section.insert(0, elem.section)
+        else:
+            heading_marks = '#' * heading
+            formatted.append(f"{indent}{heading_marks} {elem.title}:")
+            section = elem.section
+
+        for i, sec in enumerate(section):
+            formatted.extend(self._format_element_markdown(
+                sec,
+                indent if elem.title == SUMMARY else indent + indent_base,
+                heading,
+                leading_empty_line=(
+                    i != 0 and (
+                        isinstance(sec, (ParsedCode, ParsedPara)) or
+                        getattr(elem.section[i-1], 'more', None)
+                    )
+                ),
+                indent_base=indent_base
+            ))
+
+        return formatted
 
     def _format_element(self,
                         elem,
@@ -249,6 +367,24 @@ class Parser:
 
         return getattr(self, self.FORMATTER_ROUTER[type(elem).__name__])(
             elem, indent,
+            leading_empty_line=leading_empty_line,
+            indent_base=indent_base
+        )
+
+    def _format_element_markdown(
+            self,
+            elem,
+            indent,
+            heading,
+            leading_empty_line,
+            indent_base
+    ):
+        """Format an element into markdown"""
+        format_func = self.FORMATTER_ROUTER[type(elem).__name__]
+        func = getattr(self, f'{format_func}_markdown')
+
+        return func(
+            elem, indent, heading,
             leading_empty_line=leading_empty_line,
             indent_base=indent_base
         )
@@ -315,7 +451,12 @@ class Parser:
 
         return parsed
 
-    def _format(self, parsed, indent='', indent_base=INDENT_BASE):
+    def _format(
+            self,
+            parsed,
+            indent='',
+            indent_base=INDENT_BASE
+    ):
         """Format the parsed object
 
         Args:
@@ -339,7 +480,37 @@ class Parser:
 
         return '\n'.join(formatted) + '\n'
 
-    def format(self, text_or_parsed, indent='', indent_base=INDENT_BASE):
+    def _format_markdown(
+            self,
+            parsed,
+            heading,
+            indent,
+            indent_base
+    ):
+        """Format parsed into markdown"""
+        formatted = []
+
+        for title, section in parsed.items():
+            # standard title of an alias
+            if title != section.title:
+                continue
+
+            formatted.extend(self._format_element_markdown(
+                section, indent, heading,
+                leading_empty_line=(section.title != SUMMARY),
+                indent_base=indent_base
+            ))
+
+        return '\n'.join(formatted) + '\n'
+
+    def format(
+            self,
+            text_or_parsed,
+            to='text',
+            heading=1,
+            indent='',
+            indent_base=None
+    ):
         """Format the parsed object or the un-preprocessed docstring
 
         Args:
@@ -353,4 +524,15 @@ class Parser:
         else:
             parsed = text_or_parsed
 
-        return self._format(parsed, indent, indent_base)
+        if indent_base is None:
+            indent_base = INDENT_BASE if to == 'text' else INDENT_BASE_MD
+
+        if to == 'text':
+            return self._format(parsed, indent=indent, indent_base=indent_base)
+
+        return self._format_markdown(
+            parsed,
+            heading=heading,
+            indent=indent,
+            indent_base=indent_base
+        )

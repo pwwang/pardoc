@@ -61,7 +61,7 @@ class GoogleParser(Parser):
         _CODETAG: /`{3,}/
         SECTION_TITLE: /[A-Z][\w_ ]*/
         TODO: ("- " | "* ") REST_OF_LINE
-        ITEM: /[A-Za-z_\*][\w_\.\*]*(\s*\([^\)]+\))?/ ":" REST_OF_LINE
+        ITEM: /[A-Za-z_\*][\w_\.\*]*(\s*\([^\)]+\))?/ ": " REST_OF_LINE
         REST_OF_LINE: /.+/
         LANG: /[\w_]+/
     """

@@ -101,7 +101,8 @@ class NumpyParser(Parser):
                      indent_base=INDENT_BASE):
         formatted = [''] if leading_empty_line else []
         if elem.type:
-            formatted.append(f"{indent}{elem.name} : {elem.type}")
+            formatted.append(f"{indent}{elem.name} : "
+                             f"{elem.type}")
         else:
             formatted.append(f"{indent}{elem.name}")
 
