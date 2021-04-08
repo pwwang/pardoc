@@ -260,7 +260,7 @@ class Parser:
                               indent_base):
         """Format ParsedTodo to markdown"""
         formatted = [''] if leading_empty_line else []
-        formatted.append(f"{indent}- {elem.todo}")
+        formatted.append(f"{indent}- {elem.todo}  ")
 
         for i, mor in enumerate(elem.more):
             formatted.extend(self._format_element_markdown(

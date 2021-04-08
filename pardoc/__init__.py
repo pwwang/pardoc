@@ -5,7 +5,7 @@ from .liquidpy import liquidpy_parser
 from .numpy import numpy_parser
 from .parsed import pretty
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 def auto_parser(docstring):
     """Try to get a proper parser for the given docstring

@@ -24,7 +24,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='pardoc',
-    version='0.0.3',
+    version='0.0.4',
     description='Yet another docstring parser for python',
     python_requires='==3.*,>=3.6.0',
     project_urls={"homepage": "https://github.com/pwwang/pardoc",
