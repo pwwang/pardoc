@@ -1,15 +1,17 @@
 # pardoc
 
-[![pypi][3]][4] [![tag][5]][6] [![travis][7]][8] [![codacy quality][9]][10] [![codacy quality][11]][10] ![pyver][12]
+[![pypi][3]][4] [![tag][5]][6] ![pyver][12] [![build][7]][8] [![codacy quality][9]][10] [![codacy quality][11]][10]
 
 Yet another docstring parser for python, using [`lark-parser`][1]
 
 ## Installation
+
 ```python
 pip install pardoc
 ```
 
 ## A quick look
+
 ```python console
 >>> from pardoc import google_parser, pretty
 
@@ -153,6 +155,7 @@ There are 6 types of parsed objects, include the final `Parsed` object that
 attaches all sections
 
 The first 5 are all `namedtuple`s:
+
 ```python
 ParsedItem = namedtuple('ParsedItem',
                         ['name', 'type', 'desc', 'more'])
@@ -165,6 +168,7 @@ ParsedCode = namedtuple('ParsedCode', ['lang', 'codes'])
 
 The `Parsed` is an ordered dictionary (`OrderedDiot`) from [`diot`][2], which
 allows dot access to keys:
+
 ```python
 from diot import OrderedDiot
 
@@ -213,16 +217,15 @@ Returns:
 
 See `A quick look`
 
-
 [1]: https://github.com/lark-parser/lark
 [2]: https://github.com/pwwang/diot
 [3]: https://img.shields.io/pypi/v/pardoc?style=flat-square
 [4]: https://pypi.org/project/pardoc/
 [5]: https://img.shields.io/github/tag/pwwang/pardoc?style=flat-square
 [6]: https://github.com/pwwang/pardoc
-[7]: https://img.shields.io/travis/pwwang/pardoc?style=flat-square
-[8]: https://travis-ci.org/pwwang/pardoc
-[9]: https://img.shields.io/codacy/grade/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+[7]: https://img.shields.io/github/workflow/status/pwwang/pardoc/Build%20and%20Deploy?style=flat-square
+[8]: https://github.com/pwwang/pardoc
+[9]: https://img.shields.io/codacy/grade/a1ba6573a5fa4fc589ce3cf7daa5ddea?style=flat-square
 [10]: https://app.codacy.com/project/pwwang/pardoc/dashboard
-[11]: https://img.shields.io/codacy/coverage/4e65f673418a4dd89c6c85d8f360cd0e?style=flat-square
+[11]: https://img.shields.io/codacy/coverage/a1ba6573a5fa4fc589ce3cf7daa5ddea?style=flat-square
 [12]: https://img.shields.io/pypi/pyversions/pardoc?style=flat-square
