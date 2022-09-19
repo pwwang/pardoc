@@ -7,6 +7,7 @@ from .parsed import pretty
 
 __version__ = "0.0.4"
 
+
 def auto_parser(docstring):
     """Try to get a proper parser for the given docstring
 
@@ -28,4 +29,4 @@ def auto_parser(docstring):
             last_exc = ex
             continue
 
-    raise ValueError('All parsers failed') from last_exc
+    raise ValueError("All parsers failed") from last_exc

@@ -11,33 +11,31 @@ from .parsed import (
     ParsedCode,
 )
 
+
 @v_args(inline=True)
 class NumpyTransformer(Transformer):
     """Lark transformer to transform tree/nodes from numpy parser"""
-    # pylint: disable=no-self-use
 
-    def ITEM(self, line): # pylint: disable=invalid-name
+    def ITEM(self, line):
         """Parse the item name, type and description"""
         match = re.match(
-            r'^(\*{1,2}[\w_]+|[A-Za-z_][\w_]*)\s*:\s*([A-Za-z_][\w ,\[\]]*)$',
-            str(line)
-        ) or re.match(
-            r'^([A-Za-z_][\w ,\[\]]*)(\s*)$',
-            str(line)
-        )
+            r"^(\*{1,2}[\w_]+|[A-Za-z_][\w_]*)\s*:\s*([A-Za-z_][\w ,\[\]]*)$",
+            str(line),
+        ) or re.match(r"^([A-Za-z_][\w ,\[\]]*)(\s*)$", str(line))
         item_name = match.group(1)
         item_type = match.group(2)
 
         if not item_type or not item_type.strip():
             item_type = None
 
-        parsed = ParsedItem(item_name, item_type, '', [])
+        parsed = ParsedItem(item_name, item_type, "", [])
         return parsed
 
     def section(self, title, *trees):
         """Transform the section"""
         trees = self._flatten_tree(trees)
         return ParsedSection(str(title).splitlines()[0], trees)
+
 
 class NumpyParser(Parser):
     """Numpy style docstring parser class
@@ -78,56 +76,54 @@ class NumpyParser(Parser):
         ITEM: /[A-Za-z_\*][\w_\.\*]*(\s*:\s*[A-Za-z_][\w ,\[\]]*)?(?=\r?\n[\t ]+)/
         REST_OF_LINE: /.+/
         LANG: /[\w_]+/
-    """
+    """  # noqa
     TRANSFORMER = NumpyTransformer()
 
     def _preprocess(self, text):
         lines = text.splitlines()
         if not lines:
-            return '\n'
+            return "\n"
         first_line = lines.pop(0)
-        lines = textwrap.dedent('\n'.join(lines)).splitlines()
+        lines = textwrap.dedent("\n".join(lines)).splitlines()
 
-        preprocessed = [SUMMARY,
-                        '-' * len(SUMMARY),
-                        first_line] + lines
+        preprocessed = [SUMMARY, "-" * len(SUMMARY), first_line] + lines
 
-        return '\n'.join(preprocessed).rstrip() + '\n'
+        return "\n".join(preprocessed).rstrip() + "\n"
 
-    def _format_item(self,
-                     elem,
-                     indent,
-                     leading_empty_line=True,
-                     indent_base=INDENT_BASE):
-        formatted = [''] if leading_empty_line else []
+    def _format_item(
+        self, elem, indent, leading_empty_line=True, indent_base=INDENT_BASE
+    ):
+        formatted = [""] if leading_empty_line else []
         if elem.type:
-            formatted.append(f"{indent}{elem.name} : "
-                             f"{elem.type}")
+            formatted.append(f"{indent}{elem.name} : " f"{elem.type}")
         else:
             formatted.append(f"{indent}{elem.name}")
 
         for i, mor in enumerate(elem.more):
-            formatted.extend(self._format_element(
-                mor, indent + indent_base,
-                leading_empty_line=(i != 0),
-                indent_base=indent_base
-            ))
+            formatted.extend(
+                self._format_element(
+                    mor,
+                    indent + indent_base,
+                    leading_empty_line=(i != 0),
+                    indent_base=indent_base,
+                )
+            )
         return formatted
 
-    def _format_section(self,
-                        elem,
-                        indent,
-                        leading_empty_line=True,
-                        indent_base=INDENT_BASE):
-        formatted = [''] if leading_empty_line else []
+    def _format_section(
+        self, elem, indent, leading_empty_line=True, indent_base=INDENT_BASE
+    ):
+        formatted = [""] if leading_empty_line else []
         if elem.title == SUMMARY:
             section = elem.section[1:]
-            if (elem.section and
-                    isinstance(elem.section[0], ParsedPara) and
-                    elem.section[0].lines):
+            if (
+                elem.section
+                and isinstance(elem.section[0], ParsedPara)
+                and elem.section[0].lines
+            ):
                 formatted.append(elem.section[0].lines[0])
                 section.insert(0, ParsedPara(elem.section[0].lines[1:]))
-            elif elem.section: # pragma: no cover
+            elif elem.section:  # pragma: no cover
                 section.insert(0, elem.section)
         else:
             formatted.append(f"{indent}{elem.title}")
@@ -135,18 +131,18 @@ class NumpyParser(Parser):
             section = elem.section
 
         for i, sec in enumerate(section):
-            formatted.extend(self._format_element(
-                sec,
-                indent,
-                leading_empty_line=(
-                    i != 0 and (
-                        isinstance(sec, (ParsedCode, ParsedPara))
-                    )
-                ),
-                indent_base=indent_base
-            ))
+            formatted.extend(
+                self._format_element(
+                    sec,
+                    indent,
+                    leading_empty_line=(
+                        i != 0 and (isinstance(sec, (ParsedCode, ParsedPara)))
+                    ),
+                    indent_base=indent_base,
+                )
+            )
 
         return formatted
 
-# pylint: disable=invalid-name
+
 numpy_parser = NumpyParser()

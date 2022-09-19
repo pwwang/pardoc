@@ -13,10 +13,24 @@ homepage = "https://github.com/pwwang/pardoc"
 repository = "https://github.com/pwwang/pardoc"
 
 [tool.poetry.dependencies]
-python = "^3.6"
-lark-parser = "0.*"
-diot = "*"
+python = "^3.7"
+lark-parser = "^0.12"
+diot = "^0.1.6"
 
 [tool.poetry.dev-dependencies]
-pytest = "*"
-pytest-cov = "*"
+pytest = "^7"
+pytest-cov = "^3"
+
+
+[tool.pytest.ini_options]
+addopts = "-vv -p no:asyncio --tb=short --cov-config=.coveragerc --cov=pardoc --cov-report xml:.coverage.xml --cov-report term-missing"
+filterwarnings = [
+    # "error"
+]
+console_output_style = "progress"
+junit_family = "xunit1"
+
+[tool.black]
+line-length = 80
+target-version = ['py37', 'py38', 'py39']
+include = '\.pyi?$'

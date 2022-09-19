@@ -1,4 +1,0 @@
-diot
-lark-parser==0.*
-pytest
-pytest-cov

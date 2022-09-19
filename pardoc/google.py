@@ -10,23 +10,20 @@ from .parsed import (
     ParsedCode,
 )
 
+
 @v_args(inline=True)
 class GoogleTransformer(Transformer):
     """Lark transformer to transform tree/nodes from google parser"""
-    # pylint: disable=no-self-use
 
-    def ITEM(self, line): # pylint: disable=invalid-name
+    def ITEM(self, line):
         """Parse the item name, type and description"""
         match = re.match(
-            r'^([A-Za-z_\*][\w_\*]*)(?:\s*\(([^\)]+)\))?\s*:\s*(.+)',
-            str(line)
+            r"^([A-Za-z_\*][\w_\*]*)(?:\s*\(([^\)]+)\))?\s*:\s*(.+)", str(line)
         )
 
-        parsed = ParsedItem(match.group(1),
-                            match.group(2),
-                            match.group(3),
-                            [])
+        parsed = ParsedItem(match.group(1), match.group(2), match.group(3), [])
         return parsed
+
 
 class GoogleParser(Parser):
     """Google style docstring parser class
@@ -35,9 +32,7 @@ class GoogleParser(Parser):
         GRAMMER (str): Lark grammar for parsing
         TRANSFORMER (lark.Transformer): Transformer to transform the tree/nodes
     """
-    # pylint: disable=no-self-use
 
-    # pylint: disable=duplicate-code
     GRAMMER = r"""
         ?start: section+
 
@@ -65,63 +60,64 @@ class GoogleParser(Parser):
         REST_OF_LINE: /.+/
         LANG: /[\w_]+/
     """
-    # pylint: enable=duplicate-code
     TRANSFORMER = GoogleTransformer()
 
     def _preprocess(self, text):
         lines = text.splitlines()
         if not lines:
-            return '\n'
+            return "\n"
         first_line = lines.pop(0)
-        lines = textwrap.dedent('\n'.join(lines)).splitlines()
+        lines = textwrap.dedent("\n".join(lines)).splitlines()
 
-        preprocessed = [SUMMARY + ':', INDENT_BASE + first_line]
+        preprocessed = [SUMMARY + ":", INDENT_BASE + first_line]
 
         for i, line in enumerate(lines):
 
             line = line.rstrip()
-            if re.match(r'[A-Z][\w_]*\s*:', line):
+            if re.match(r"[A-Z][\w_]*\s*:", line):
                 preprocessed.extend(lines[i:])
                 break
 
             preprocessed.append(line and INDENT_BASE + line)
 
-        return '\n'.join(preprocessed).rstrip() + '\n'
+        return "\n".join(preprocessed).rstrip() + "\n"
 
-
-    def _format_section(self,
-                        elem,
-                        indent,
-                        leading_empty_line=True,
-                        indent_base=INDENT_BASE):
-        formatted = [''] if leading_empty_line else []
+    def _format_section(
+        self, elem, indent, leading_empty_line=True, indent_base=INDENT_BASE
+    ):
+        formatted = [""] if leading_empty_line else []
         if elem.title == SUMMARY:
             section = elem.section[1:]
-            if (elem.section and
-                    isinstance(elem.section[0], ParsedPara) and
-                    elem.section[0].lines):
+            if (
+                elem.section
+                and isinstance(elem.section[0], ParsedPara)
+                and elem.section[0].lines
+            ):
                 formatted.append(elem.section[0].lines[0])
                 section.insert(0, ParsedPara(elem.section[0].lines[1:]))
-            elif elem.section: # pragma: no cover
+            elif elem.section:  # pragma: no cover
                 section.insert(0, elem.section)
         else:
             formatted.append(f"{indent}{elem.title}:")
             section = elem.section
 
         for i, sec in enumerate(section):
-            formatted.extend(self._format_element(
-                sec,
-                indent if elem.title == SUMMARY else indent + indent_base,
-                leading_empty_line=(
-                    i != 0 and (
-                        isinstance(sec, (ParsedCode, ParsedPara)) or
-                        getattr(elem.section[i-1], 'more', None)
-                    )
-                ),
-                indent_base=indent_base
-            ))
+            formatted.extend(
+                self._format_element(
+                    sec,
+                    indent if elem.title == SUMMARY else indent + indent_base,
+                    leading_empty_line=(
+                        i != 0
+                        and (
+                            isinstance(sec, (ParsedCode, ParsedPara))
+                            or getattr(elem.section[i - 1], "more", None)
+                        )
+                    ),
+                    indent_base=indent_base,
+                )
+            )
 
         return formatted
 
-# pylint: disable=invalid-name
+
 google_parser = GoogleParser()
