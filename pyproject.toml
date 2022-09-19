@@ -22,7 +22,6 @@ pytest = "^7"
 pytest-cov = "^3"
 flake8 = "^4"
 
-
 [tool.pytest.ini_options]
 addopts = "-vv -p no:asyncio --tb=short --cov-config=.coveragerc --cov=pardoc --cov-report xml:.coverage.xml --cov-report term-missing"
 filterwarnings = [
