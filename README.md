@@ -223,7 +223,7 @@ See `A quick look`
 [4]: https://pypi.org/project/pardoc/
 [5]: https://img.shields.io/github/tag/pwwang/pardoc?style=flat-square
 [6]: https://github.com/pwwang/pardoc
-[7]: https://img.shields.io/github/workflow/status/pwwang/pardoc/Build%20and%20Deploy?style=flat-square
+[7]: https://img.shields.io/github/actions/workflow/status/pwwang/pardoc/build.yml?style=flat-square
 [8]: https://github.com/pwwang/pardoc
 [9]: https://img.shields.io/codacy/grade/a1ba6573a5fa4fc589ce3cf7daa5ddea?style=flat-square
 [10]: https://app.codacy.com/project/pwwang/pardoc/dashboard
