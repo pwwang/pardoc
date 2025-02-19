@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "pardoc"
-version = "0.1.1"
+version = "0.2.0"
 description = "Yet another docstring parser for python"
 authors = [ "pwwang <pwwang@pwwang.com>",]
 license = "MIT"
